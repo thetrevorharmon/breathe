@@ -33,7 +33,7 @@ export function HomeScreen({
   const summaryLine = `${sets} sets × ${reps} reps`
 
   return (
-    <section className="flex flex-1 flex-col gap-[22px] px-6 pb-7 pt-[60px]">
+    <section className="flex flex-1 flex-col gap-[22px] px-6 pb-[max(28px,calc(env(safe-area-inset-bottom)+16px))] pt-[max(60px,calc(env(safe-area-inset-top)+16px))]">
       <header className="flex items-start justify-between">
         <div className="flex flex-col gap-1">
           <div className="text-[12px] font-extrabold tracking-[0.16em] text-breath">

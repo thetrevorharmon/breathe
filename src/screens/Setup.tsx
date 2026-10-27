@@ -20,7 +20,7 @@ export function SetupScreen({ onNext, onBack }: { onNext: () => void; onBack?: (
 
   return (
     <section className="flex h-dvh flex-col">
-      <header className="flex items-center px-3 pb-1.5 pt-[52px]">
+      <header className="flex items-center px-3 pb-1.5 pt-[max(52px,calc(env(safe-area-inset-top)+8px))]">
         <IconButton aria-label="Back" onClick={onBack} disabled={!onBack}>
           <ChevronLeft size={22} strokeWidth={2.4} aria-hidden />
         </IconButton>
@@ -133,7 +133,7 @@ export function SetupScreen({ onNext, onBack }: { onNext: () => void; onBack?: (
         </div>
       </div>
 
-      <footer className="flex flex-col gap-3 border-t border-border px-6 pb-[34px] pt-3.5">
+      <footer className="flex flex-col gap-3 border-t border-border px-6 pb-[max(34px,calc(env(safe-area-inset-bottom)+12px))] pt-3.5">
         <div className="flex justify-between text-[14px]">
           <span className="font-semibold text-muted">Total time</span>
           <span className="font-extrabold" data-testid="total-time">

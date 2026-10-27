@@ -74,7 +74,7 @@ export function SessionScreen({ onExit, onFinish, devStart }: Props) {
     })
 
   return (
-    <section className="flex flex-1 flex-col items-center px-6 pb-11 pt-14">
+    <section className="flex flex-1 flex-col items-center px-6 pb-[max(44px,calc(env(safe-area-inset-bottom)+16px))] pt-[max(56px,calc(env(safe-area-inset-top)+12px))]">
       <header className="flex h-11 w-full items-center justify-between">
         <div className="flex items-center gap-1">
           <IconButton aria-label="End workout" className="-ml-3" onClick={() => ask('exit')}>

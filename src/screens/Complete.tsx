@@ -66,7 +66,7 @@ export function CompleteScreen({ result, onNext }: { result?: SessionResult; onN
   const zone = effort ? zoneOf(effort) : null
 
   return (
-    <section className="flex flex-1 flex-col gap-[18px] px-6 pb-8 pt-14">
+    <section className="flex flex-1 flex-col gap-[18px] px-6 pb-[max(32px,calc(env(safe-area-inset-bottom)+16px))] pt-[max(56px,calc(env(safe-area-inset-top)+12px))]">
       <div className="flex flex-col items-center gap-2 text-center">
         <div className="flex h-14 w-14 items-center justify-center rounded-full bg-breath text-on-breath">
           <Check size={30} strokeWidth={3.4} aria-hidden="true" />

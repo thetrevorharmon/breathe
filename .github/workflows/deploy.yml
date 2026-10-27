@@ -23,7 +23,8 @@ jobs:
         with:
           node-version: 20.19.5
           cache: npm
-      - run: npm ci
+      # npm 10 (bundled with Node 20) fails on this lockfile; match local npm 11.
+      - run: npx -y npm@11 ci
       - run: npm test
       - run: npm run build
       - uses: actions/upload-pages-artifact@v3
