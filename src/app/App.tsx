@@ -23,7 +23,9 @@ export function App({ dev }: { dev: DevParams }) {
         ) : (
           <>
             {flow.screen === 'home' && <HomeScreen onNext={next} />}
-            {flow.screen === 'setup' && <SetupScreen onNext={next} />}
+            {flow.screen === 'setup' && (
+              <SetupScreen onNext={next} onBack={() => dispatch({ type: 'back' })} />
+            )}
             {flow.screen === 'session' && <SessionScreen onNext={next} />}
             {flow.screen === 'complete' && <CompleteScreen onNext={next} />}
           </>
