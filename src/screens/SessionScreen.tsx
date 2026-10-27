@@ -1,12 +1,14 @@
-import { X } from 'lucide-react'
+import { Volume2, VolumeX, X } from 'lucide-react'
 import { useRef, useState } from 'react'
 import { ConfirmDialog } from '../components/ConfirmDialog'
 import { IconButton } from '../components/IconButton'
 import { PrimaryButton } from '../components/PrimaryButton'
 import { SessionRing } from '../components/ring/SessionRing'
 import type { SessionConfig, SessionResult } from '../domain/types'
+import { useCues } from '../session/cues/useCues'
 import { frameAt } from '../session/frame'
 import { useSessionClock } from '../session/useSessionClock'
+import { useWakeLock } from '../session/useWakeLock'
 import { useSettings } from '../storage/storage'
 
 /** m:ss, floored (the header clock counts whole elapsed seconds). */
@@ -24,7 +26,7 @@ type Props = {
 }
 
 export function SessionScreen({ onExit, onFinish, devStart }: Props) {
-  const [settings] = useSettings()
+  const [settings, updateSettings] = useSettings()
   // Frozen when the session is entered.
   const [config] = useState<SessionConfig>(() => ({
     dialIn: settings.dialIn,
@@ -40,6 +42,8 @@ export function SessionScreen({ onExit, onFinish, devStart }: Props) {
   }))
   const clockState = useSessionClock(config, { startT: devStart?.t, paused: devStart?.paused })
   const frame = frameAt(config, clockState.t)
+  useCues(clockState, settings.cuesMuted)
+  useWakeLock(!clockState.done)
 
   const [confirm, setConfirm] = useState<'exit' | 'restart' | null>(null)
   const pausedByDialog = useRef(false)
@@ -78,8 +82,22 @@ export function SessionScreen({ onExit, onFinish, devStart }: Props) {
           </IconButton>
           <div className="text-[17px] font-bold">Strength Protocol</div>
         </div>
-        <div className="text-[14px] font-semibold text-muted">
-          {clock(frame.t)} <span className="text-faint">/ {clock(frame.total)}</span>
+        <div className="flex items-center gap-1">
+          <div className="text-[14px] font-semibold text-muted">
+            {clock(frame.t)} <span className="text-faint">/ {clock(frame.total)}</span>
+          </div>
+          <IconButton
+            aria-label={settings.cuesMuted ? 'Unmute cues' : 'Mute cues'}
+            aria-pressed={settings.cuesMuted}
+            className="-mr-3 text-muted"
+            onClick={() => updateSettings({ cuesMuted: !settings.cuesMuted })}
+          >
+            {settings.cuesMuted ? (
+              <VolumeX size={22} strokeWidth={2} />
+            ) : (
+              <Volume2 size={22} strokeWidth={2} />
+            )}
+          </IconButton>
         </div>
       </header>
 
