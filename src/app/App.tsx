@@ -2,8 +2,8 @@ import { useReducer, useState } from 'react'
 import { CompleteScreen } from '../screens/Complete'
 import { Gallery } from '../screens/Gallery'
 import { HomeScreen } from '../screens/Home'
+import { SessionScreen } from '../screens/SessionScreen'
 import { SettingsSheet } from '../screens/SettingsSheet'
-import { SessionScreen } from '../screens/Session'
 import { SetupScreen } from '../screens/Setup'
 import { ThemeProvider } from '../theme/ThemeProvider'
 import type { DevParams } from './devParams'
@@ -31,7 +31,13 @@ export function App({ dev }: { dev: DevParams }) {
             {flow.screen === 'setup' && (
               <SetupScreen onNext={next} onBack={() => dispatch({ type: 'back' })} />
             )}
-            {flow.screen === 'session' && <SessionScreen onNext={next} />}
+            {flow.screen === 'session' && (
+              <SessionScreen
+                onExit={() => dispatch({ type: 'back' })}
+                onFinish={(result) => dispatch({ type: 'finishSession', result })}
+                devStart={{ t: dev.t, paused: dev.paused }}
+              />
+            )}
             {flow.screen === 'complete' && <CompleteScreen onNext={next} />}
           </>
         )}

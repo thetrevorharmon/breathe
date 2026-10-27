@@ -17,6 +17,29 @@ export type Settings = {
   cuesMuted: boolean
 }
 
+/** The part of Settings a session needs. Frozen when the session starts. */
+export type SessionConfig = Pick<
+  Settings,
+  | 'dialIn'
+  | 'dialOut'
+  | 'sets'
+  | 'reps'
+  | 'inhale'
+  | 'holdTop'
+  | 'exhale'
+  | 'holdBottom'
+  | 'restSeconds'
+  | 'ringBreathes'
+>
+
+/** Handed from the Session to the Complete screen. */
+export type SessionResult = {
+  config: SessionConfig
+  startedAt: string // ISO
+  /** Active time in whole seconds: pauses excluded, skips shorten it. */
+  durationSec: number
+}
+
 export type WorkoutLog = {
   id: string
   date: string // local YYYY-MM-DD
