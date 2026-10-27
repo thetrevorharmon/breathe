@@ -155,3 +155,5 @@ node_modules/
 
 # Agent worktrees
 .claude/worktrees/
+test-results/
+playwright-report/
