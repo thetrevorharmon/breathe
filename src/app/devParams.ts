@@ -14,6 +14,8 @@ export type Screen = (typeof SCREENS)[number]
 export type DevParams = {
   screen?: Screen | 'gallery'
   mode?: ResolvedMode
+  /** `?seed=demo` replaces stored logs with fake history (dev only; see seedDemo.ts). */
+  seed?: 'demo'
   /** Raw access for params owned by other features. */
   raw: URLSearchParams
 }
@@ -30,6 +32,7 @@ export function parseDevParams(search: string): DevParams {
           ? (screen as Screen)
           : undefined,
     mode: mode === 'light' || mode === 'dark' ? mode : undefined,
+    seed: raw.get('seed') === 'demo' ? 'demo' : undefined,
     raw,
   }
 }

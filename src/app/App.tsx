@@ -1,4 +1,4 @@
-import { useReducer } from 'react'
+import { useReducer, useState } from 'react'
 import { CompleteScreen } from '../screens/Complete'
 import { Gallery } from '../screens/Gallery'
 import { HomeScreen } from '../screens/Home'
@@ -13,6 +13,8 @@ export function App({ dev }: { dev: DevParams }) {
   const [flow, dispatch] = useReducer(flowReducer, undefined, () =>
     initialFlow(dev.screen === 'gallery' ? 'home' : dev.screen),
   )
+  // T6 renders the settings sheet from this state.
+  const [, setSettingsOpen] = useState(false)
   const next = () => dispatch({ type: 'next' })
 
   return (
@@ -22,7 +24,9 @@ export function App({ dev }: { dev: DevParams }) {
           <Gallery />
         ) : (
           <>
-            {flow.screen === 'home' && <HomeScreen onNext={next} />}
+            {flow.screen === 'home' && (
+              <HomeScreen onNext={next} onOpenSettings={() => setSettingsOpen(true)} />
+            )}
             {flow.screen === 'setup' && (
               <SetupScreen onNext={next} onBack={() => dispatch({ type: 'back' })} />
             )}
