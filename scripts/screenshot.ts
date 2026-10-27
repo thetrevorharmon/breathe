@@ -66,7 +66,7 @@ async function main() {
       stdio: 'ignore',
     },
   )
-  const base = `http://127.0.0.1:${port}/`
+  const base = `http://127.0.0.1:${port}/breathe/`
   try {
     await waitFor(base)
     const browser = await chromium.launch()
