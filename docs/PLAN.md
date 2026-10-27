@@ -136,3 +136,6 @@ These override the spec where they differ.
 ## 5. Open questions
 
 None right now. Agents should add new questions here rather than guess.
+
+- (T1) jsdom is pinned to v26 (v30 crashes under Node 20.19.5 via undici). `npm install` under Node 20's bundled npm 10 failed with an arborist error; npm 11 (`npx npm@11 install`) worked.
+- (T1) Dev gallery of shared components: `?screen=gallery`.

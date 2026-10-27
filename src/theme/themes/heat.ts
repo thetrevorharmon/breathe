@@ -1,0 +1,53 @@
+import { rgba, type Theme, type Tokens } from '../tokens'
+
+const dark: Tokens = {
+  bgTop: '#200E0B',
+  bgBottom: '#0A0505',
+  text: '#FFF6F2',
+  muted: '#B39B94',
+  faint: '#6E5A55',
+  breath: '#FF5533',
+  onBreath: '#1E0E0C',
+  rest: '#6B97FF',
+  restText: '#6B97FF',
+  progress: '#FFB627',
+  onZone: '#1E0E0C',
+  surface: 'rgba(255,246,242,0.05)',
+  border: 'rgba(255,246,242,0.10)',
+  subtle: 'rgba(255,246,242,0.08)',
+  band: 'rgba(255,85,51,0.24)',
+  glow: `0 0 0 5px ${rgba('#FFB627', 0.22)}, 0 0 18px ${rgba('#FFB627', 0.55)}`,
+  trackOuter: rgba('#FFF6F2', 0.14),
+  tickOff: rgba('#FFF6F2', 0.22),
+  tickOn: rgba('#FFB627', 0.9),
+  breathTrack: rgba('#FF5533', 0.16),
+  restTrack: rgba('#6B97FF', 0.16),
+  phaseDotOff: rgba('#FF5533', 0.45),
+}
+
+const light: Tokens = {
+  bgTop: '#FCF6F3',
+  bgBottom: '#F3E7E1',
+  text: '#1E0E0C',
+  muted: '#6A5651',
+  faint: '#A8958F',
+  breath: '#E8401C',
+  onBreath: '#FFFFFF',
+  rest: '#3567E8',
+  restText: '#2A55CC',
+  progress: '#B86E00',
+  onZone: '#FFFFFF',
+  surface: '#FFFFFF',
+  border: 'rgba(30,14,12,0.09)',
+  subtle: 'rgba(30,14,12,0.06)',
+  band: 'rgba(232,64,28,0.18)',
+  glow: `0 0 0 5px ${rgba('#B86E00', 0.14)}, 0 0 18px ${rgba('#B86E00', 0.25)}`,
+  trackOuter: rgba('#1E0E0C', 0.12),
+  tickOff: rgba('#1E0E0C', 0.22),
+  tickOn: rgba('#B86E00', 0.9),
+  breathTrack: rgba('#E8401C', 0.16),
+  restTrack: rgba('#3567E8', 0.16),
+  phaseDotOff: rgba('#E8401C', 0.45),
+}
+
+export const heat: Theme = { id: 'heat', name: 'Heat', light, dark }

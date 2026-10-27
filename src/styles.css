@@ -1,0 +1,64 @@
+@import 'tailwindcss';
+@import '@fontsource-variable/manrope';
+
+/* Theme tokens are CSS variables written on <html> by ThemeProvider (see src/theme). */
+@theme inline {
+  --font-sans: 'Manrope Variable', ui-sans-serif, system-ui, sans-serif;
+
+  --color-text: var(--text);
+  --color-muted: var(--muted);
+  --color-faint: var(--faint);
+  --color-breath: var(--breath);
+  --color-on-breath: var(--on-breath);
+  --color-rest: var(--rest);
+  --color-rest-text: var(--rest-text);
+  --color-progress: var(--progress);
+  --color-on-zone: var(--on-zone);
+  --color-surface: var(--surface);
+  --color-border: var(--border);
+  --color-subtle: var(--subtle);
+  --color-band: var(--band);
+  --color-bg-top: var(--bg-top);
+  --color-bg-bottom: var(--bg-bottom);
+  --color-track-outer: var(--track-outer);
+  --color-tick-off: var(--tick-off);
+  --color-tick-on: var(--tick-on);
+  --color-breath-track: var(--breath-track);
+  --color-rest-track: var(--rest-track);
+  --color-phase-dot-off: var(--phase-dot-off);
+  --shadow-glow: var(--glow);
+
+  --radius-card: 24px;
+  --radius-tile: 18px;
+  --radius-control: 12px;
+}
+
+html {
+  background-color: var(--bg-bottom);
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  background: linear-gradient(180deg, var(--bg-top), var(--bg-bottom));
+  background-attachment: fixed;
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-variant-numeric: tabular-nums;
+  -webkit-font-smoothing: antialiased;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+button:disabled {
+  cursor: default;
+}
+
+:focus-visible {
+  outline: 2px solid var(--breath);
+  outline-offset: 2px;
+}

@@ -1,0 +1,4 @@
+dist
+.screenshots
+docs
+package-lock.json
