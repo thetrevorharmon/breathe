@@ -38,7 +38,9 @@ export function App({ dev }: { dev: DevParams }) {
                 devStart={{ t: dev.t, paused: dev.paused }}
               />
             )}
-            {flow.screen === 'complete' && <CompleteScreen onNext={next} />}
+            {flow.screen === 'complete' && (
+              <CompleteScreen result={flow.sessionResult} onNext={next} />
+            )}
           </>
         )}
       </PhoneColumn>
