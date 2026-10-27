@@ -1,6 +1,43 @@
-export type BeepKind = 'rest' | 'tick' | 'go'
+import type { CueAudio } from '../../domain/types'
+import exhaleUrl from './sounds/exhale.mp3'
+import goUrl from './sounds/go.mp3'
+import holdBottomUrl from './sounds/hold-bottom.mp3'
+import holdTopUrl from './sounds/hold-top.mp3'
+import inhaleUrl from './sounds/inhale.mp3'
+import restUrl from './sounds/rest.mp3'
+import tickUrl from './sounds/tick.mp3'
+
+/** Recorded voice cues (Trevor's voice) and generated beeps, embedded as files. */
+export type Clip = 'inhale' | 'holdTop' | 'exhale' | 'holdBottom' | 'rest' | 'tick' | 'go'
+
+const CLIP_URLS: Record<Clip, string> = {
+  inhale: inhaleUrl,
+  holdTop: holdTopUrl,
+  exhale: exhaleUrl,
+  holdBottom: holdBottomUrl,
+  rest: restUrl,
+  tick: tickUrl,
+  go: goUrl,
+}
+
+/**
+ * iOS audio session per setting. Web Audio defaults to "ambient", which the
+ * silent switch mutes.
+ * - duck: "transient" plays over other audio and lowers it while a cue plays.
+ * - mix: "ambient" plays over music at full volume, but follows the silent switch.
+ * - pause: "playback" is always audible but takes over (pauses) other audio.
+ * Only Safari supports this API; elsewhere it's a no-op.
+ */
+const SESSION_TYPE: Record<CueAudio, string> = {
+  duck: 'transient',
+  mix: 'ambient',
+  pause: 'playback',
+}
 
 let ctx: AudioContext | null = null
+const buffers = new Map<Clip, AudioBuffer>()
+let loading: Promise<void> | null = null
+let voice: AudioBufferSourceNode | null = null
 
 function getCtx(): AudioContext | null {
   if (ctx) return ctx
@@ -18,80 +55,101 @@ function getCtx(): AudioContext | null {
   return ctx
 }
 
-function synth(): SpeechSynthesis | null {
+export function setAudioSession(mode: CueAudio | 'auto'): void {
   try {
-    return typeof speechSynthesis !== 'undefined' ? speechSynthesis : null
+    const nav = navigator as unknown as { audioSession?: { type: string } }
+    if (nav.audioSession) nav.audioSession.type = mode === 'auto' ? 'auto' : SESSION_TYPE[mode]
   } catch {
-    return null
+    /* unsupported */
   }
 }
 
-/** Call synchronously inside a user gesture (the Start tap) so iOS allows audio later. */
-export function unlockAudio(): void {
+function loadClips(c: AudioContext): Promise<void> {
+  if (loading) return loading
+  loading = Promise.all(
+    (Object.keys(CLIP_URLS) as Clip[]).map(async (clip) => {
+      try {
+        const res = await fetch(CLIP_URLS[clip])
+        const data = await res.arrayBuffer()
+        buffers.set(clip, await c.decodeAudioData(data))
+      } catch {
+        /* missing clip: that cue stays silent */
+      }
+    }),
+  ).then(() => {})
+  return loading
+}
+
+/** Fetch and decode every clip ahead of time (no gesture needed), e.g. when Setup opens. */
+export function preloadCues(): void {
   try {
     const c = getCtx()
-    if (c && c.state !== 'running') void c.resume().catch(() => {})
-    const s = synth()
-    if (s && typeof SpeechSynthesisUtterance !== 'undefined') {
-      const u = new SpeechSynthesisUtterance('')
-      u.volume = 0
-      s.speak(u)
-    }
+    if (c) void loadClips(c)
+  } catch {
+    /* unsupported */
+  }
+}
+
+/**
+ * Call synchronously inside a user gesture (the Start tap) so iOS allows audio,
+ * then decode the clips in the background.
+ */
+export function unlockAudio(mode?: CueAudio): void {
+  try {
+    if (mode) setAudioSession(mode)
+    const c = getCtx()
+    if (!c) return
+    if (c.state !== 'running') void c.resume().catch(() => {})
+    // A silent one-sample buffer fully unlocks output on older iOS.
+    const src = c.createBufferSource()
+    src.buffer = c.createBuffer(1, 1, 22050)
+    src.connect(c.destination)
+    src.start(0)
+    void loadClips(c)
   } catch {
     /* unsupported: stay silent */
   }
 }
 
-const BEEPS: Record<BeepKind, { freq: number; dur: number; type: OscillatorType; gain: number }> = {
-  rest: { freq: 523.25, dur: 0.45, type: 'sine', gain: 0.22 },
-  tick: { freq: 659.25, dur: 0.14, type: 'triangle', gain: 0.18 },
-  go: { freq: 987.77, dur: 0.4, type: 'sine', gain: 0.22 },
-}
+const VOICE: ReadonlySet<Clip> = new Set(['inhale', 'holdTop', 'exhale', 'holdBottom'])
 
-export function beep(kind: BeepKind): void {
+export function play(clip: Clip): void {
   try {
     const c = getCtx()
     if (!c) return
     if (c.state === 'suspended') void c.resume().catch(() => {})
-    const { freq, dur, type, gain } = BEEPS[kind]
-    const now = c.currentTime
-    const osc = c.createOscillator()
-    const g = c.createGain()
-    osc.type = type
-    osc.frequency.value = freq
-    g.gain.setValueAtTime(0.0001, now)
-    g.gain.exponentialRampToValueAtTime(gain, now + 0.015)
-    g.gain.exponentialRampToValueAtTime(0.0001, now + dur)
-    osc.connect(g)
-    g.connect(c.destination)
-    osc.start(now)
-    osc.stop(now + dur + 0.02)
+    const buf = buffers.get(clip)
+    if (!buf) {
+      void loadClips(c)
+      return
+    }
+    // A new spoken word cuts off the previous one; beeps can overlap.
+    if (VOICE.has(clip)) stopVoice()
+    const src = c.createBufferSource()
+    src.buffer = buf
+    src.connect(c.destination)
+    src.start()
+    if (VOICE.has(clip)) {
+      voice = src
+      src.onended = () => {
+        if (voice === src) voice = null
+      }
+    }
   } catch {
     /* ignore */
   }
 }
 
-export function say(text: string): void {
+function stopVoice(): void {
   try {
-    const s = synth()
-    if (!s || typeof SpeechSynthesisUtterance === 'undefined') return
-    s.cancel()
-    const u = new SpeechSynthesisUtterance(text)
-    u.rate = 1
-    u.lang = 'en-US'
-    const voice = s.getVoices?.().find((v) => v.lang?.toLowerCase().startsWith('en'))
-    if (voice) u.voice = voice
-    s.speak(u)
+    voice?.stop()
   } catch {
-    /* ignore */
+    /* already stopped */
   }
+  voice = null
 }
 
-/** Stop any queued speech (e.g. when muting or leaving the session). */
+/** Stop the word in flight (e.g. when muting or leaving the session). */
 export function silence(): void {
-  try {
-    synth()?.cancel()
-  } catch {
-    /* ignore */
-  }
+  stopVoice()
 }

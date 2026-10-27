@@ -1,5 +1,8 @@
 import type { ColorMode } from '../theme/tokens'
 
+/** How cues share audio with music on iOS (see session/cues/audio.ts). */
+export type CueAudio = 'duck' | 'mix' | 'pause'
+
 export type Settings = {
   dialIn: number // 1–6
   dialOut: number // 1–5
@@ -15,6 +18,8 @@ export type Settings = {
   colorMode: ColorMode
   /** Silences spoken and tone cues during a session. */
   cuesMuted: boolean
+  /** What happens to other audio (music, podcasts) while cues play. */
+  cueAudio: CueAudio
 }
 
 /** The part of Settings a session needs. Frozen when the session starts. */

@@ -67,6 +67,17 @@ describe('SettingsSheet', () => {
     expect(getSettings().cuesMuted).toBe(true)
   })
 
+  it('music choice saves cueAudio, explains it, and hides when cues are off', async () => {
+    const user = userEvent.setup()
+    render(<Harness />)
+    expect(screen.getByRole('radio', { name: 'Lower' })).toHaveAttribute('data-state', 'on')
+    await user.click(screen.getByRole('radio', { name: 'Pause' }))
+    expect(getSettings().cueAudio).toBe('pause')
+    expect(screen.getByText(/other audio stops/)).toBeInTheDocument()
+    await user.click(screen.getByRole('switch', { name: 'Sound cues' }))
+    expect(screen.queryByRole('radio', { name: 'Pause' })).not.toBeInTheDocument()
+  })
+
   it('closes on Escape', async () => {
     const user = userEvent.setup()
     render(<Harness />)

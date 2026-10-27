@@ -1,20 +1,22 @@
 import { ChevronLeft } from 'lucide-react'
+import { useEffect } from 'react'
 import { DialTile } from '../components/DialTile'
 import { IconButton } from '../components/IconButton'
 import { PrimaryButton } from '../components/PrimaryButton'
 import { Stepper } from '../components/Stepper'
 import { formatSeconds, formatTime } from '../lib/format'
 import { totalSeconds } from '../lib/workout'
-import { unlockAudio } from '../session/cues/unlockAudio'
+import { preloadCues, unlockAudio } from '../session/cues/unlockAudio'
 import { useSettings } from '../storage/storage'
 
 const rowClass = 'h-14 border-b border-border'
 
 export function SetupScreen({ onNext, onBack }: { onNext: () => void; onBack?: () => void }) {
   const [s, set] = useSettings()
+  useEffect(preloadCues, [])
 
   const start = () => {
-    unlockAudio()
+    unlockAudio(s.cueAudio)
     onNext()
   }
 

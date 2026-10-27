@@ -42,7 +42,7 @@ export function SessionScreen({ onExit, onFinish, devStart }: Props) {
   }))
   const clockState = useSessionClock(config, { startT: devStart?.t, paused: devStart?.paused })
   const frame = frameAt(config, clockState.t)
-  useCues(clockState, settings.cuesMuted)
+  useCues(clockState, settings.cuesMuted, settings.cueAudio)
   useWakeLock(!clockState.done)
 
   const [confirm, setConfirm] = useState<'exit' | 'restart' | null>(null)

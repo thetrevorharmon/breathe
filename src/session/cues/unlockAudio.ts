@@ -1,1 +1,1 @@
-export { unlockAudio } from './audio'
+export { preloadCues, unlockAudio } from './audio'

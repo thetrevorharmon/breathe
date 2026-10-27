@@ -6,7 +6,7 @@ import { getSettings, KEYS, setBackend, updateSettings } from '../storage/storag
 import { SetupScreen } from './Setup'
 
 const unlock = vi.hoisted(() => vi.fn())
-vi.mock('../session/cues/unlockAudio', () => ({ unlockAudio: unlock }))
+vi.mock('../session/cues/unlockAudio', () => ({ unlockAudio: unlock, preloadCues: () => {} }))
 
 let store: Map<string, string>
 beforeEach(() => {

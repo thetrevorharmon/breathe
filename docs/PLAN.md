@@ -112,11 +112,17 @@ Two rules for every agent:
 These override the spec where they differ.
 
 - **Wake lock:** on for the whole session. Re-acquire it when the page becomes visible again, and release it on exit or finish.
-- **Spoken cues** (`speechSynthesis`): say "Inhale", "Hold", "Exhale", "Hold" at each phase change while breathing.
+- **Spoken cues:** recordings of Trevor saying "Inhale", "Hold", "Exhale", "Hold" (one clip per phase, in `src/session/cues/sounds/`), played through Web Audio at each phase change. They replaced `speechSynthesis`.
 - **Tone cues** (Web Audio):
   - one beep at the transition from a set into rest
   - countdown beeps at 3, 2 and 1 seconds before every set starts, including the 3 s lead-in before set 1
 - **Cue controls:** one mute toggle in the session header silences both. Unlock audio on the Setup "Start" tap, since iOS needs a user gesture.
+- **Sharing audio with music** (setting "When music is playing", iOS Audio Session API, Safari only):
+  - **Lower** (default): `transient`. Cues play over music and lower it while each cue plays.
+  - **Mix:** `ambient`. Cues play over music at full volume, but the silent switch mutes them.
+  - **Pause:** `playback`. Cues always play, and other audio stops during the workout.
+
+  The goal is cues that play without switching the phone off silent. This still needs checking on a real iPhone.
 - **No vibration.**
 - **Background behaviour** (replaces spec §3.1's "pause when hidden"):
   - **Hidden while breathing (or in the lead-in):** pause immediately.

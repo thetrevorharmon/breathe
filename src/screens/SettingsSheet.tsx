@@ -8,11 +8,18 @@ import { buildExport, downloadExport, mergeLogs, parseImport } from '../storage/
 import { getLogs, useLogs, useSettings } from '../storage/storage'
 import { themes } from '../theme/themes'
 import type { ColorMode } from '../theme/tokens'
+import type { CueAudio } from '../domain/types'
 
 const MODES: { value: ColorMode; label: string }[] = [
   { value: 'system', label: 'System' },
   { value: 'light', label: 'Light' },
   { value: 'dark', label: 'Dark' },
+]
+
+const CUE_AUDIO: { value: CueAudio; label: string; hint: string }[] = [
+  { value: 'duck', label: 'Lower', hint: 'Music dips while each cue plays.' },
+  { value: 'mix', label: 'Mix', hint: 'Cues play over music, but the silent switch mutes them.' },
+  { value: 'pause', label: 'Pause', hint: 'Cues always play; other audio stops during the workout.' },
 ]
 
 const readText = (file: File) =>
@@ -192,6 +199,9 @@ export function SettingsSheet({
                 onChange={(v) => update({ ringBreathes: v })}
               />
             </Row>
+          </Section>
+
+          <Section title="Sound">
             <Row id="sound-cues" label="Sound cues">
               <Toggle
                 id="sound-cues"
@@ -199,6 +209,34 @@ export function SettingsSheet({
                 onChange={(v) => update({ cuesMuted: !v })}
               />
             </Row>
+            {!settings.cuesMuted && (
+              <div>
+                <div id="music-label" className="mb-2 text-[16px] font-bold">
+                  When music is playing
+                </div>
+                <ToggleGroup.Root
+                  type="single"
+                  aria-labelledby="music-label"
+                  aria-describedby="music-hint"
+                  value={settings.cueAudio}
+                  onValueChange={(v) => v && update({ cueAudio: v as CueAudio })}
+                  className="grid grid-cols-3 gap-1 rounded-full bg-subtle p-1"
+                >
+                  {CUE_AUDIO.map((m) => (
+                    <ToggleGroup.Item
+                      key={m.value}
+                      value={m.value}
+                      className="h-11 rounded-full border-0 bg-transparent text-[15px] font-extrabold text-muted data-[state=on]:bg-breath data-[state=on]:text-on-breath"
+                    >
+                      {m.label}
+                    </ToggleGroup.Item>
+                  ))}
+                </ToggleGroup.Root>
+                <p id="music-hint" className="mt-2 mb-0 text-[14px] text-muted">
+                  {CUE_AUDIO.find((m) => m.value === settings.cueAudio)?.hint}
+                </p>
+              </div>
+            )}
           </Section>
 
           <Section title="Data">
