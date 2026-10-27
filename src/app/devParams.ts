@@ -16,6 +16,8 @@ export type DevParams = {
   mode?: ResolvedMode
   /** `?seed=demo` replaces stored logs with fake history (dev only; see seedDemo.ts). */
   seed?: 'demo'
+  /** ?sheet=settings opens the settings sheet on load. */
+  sheet?: 'settings'
   /** Raw access for params owned by other features. */
   raw: URLSearchParams
 }
@@ -33,6 +35,7 @@ export function parseDevParams(search: string): DevParams {
           : undefined,
     mode: mode === 'light' || mode === 'dark' ? mode : undefined,
     seed: raw.get('seed') === 'demo' ? 'demo' : undefined,
+    sheet: raw.get('sheet') === 'settings' ? 'settings' : undefined,
     raw,
   }
 }
