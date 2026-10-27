@@ -1,0 +1,448 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Breath training app — Heat flow</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#FF5533}a:hover{color:#E8401C}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; position: relative; overflow: hidden; background: linear-gradient(180deg, {{c.bgTop}} 0%, {{c.bgBottom}} 100%); color: {{c.text}}; font-family: 'Manrope', system-ui, sans-serif; font-variant-numeric: tabular-nums">
+
+  <sc-if value="{{isHome}}" hint-placeholder-val="{{ true }}">
+    <div style="height: 844px; box-sizing: border-box; padding: 60px 24px 28px; display: flex; flex-direction: column; gap: 22px">
+
+      <div style="display: flex; flex-direction: column; gap: 4px">
+        <div style="font-size: 12px; font-weight: 800; letter-spacing: 0.16em; color: {{c.breath}}">BREATH TRAINING</div>
+        <div style="font-size: 28px; font-weight: 800">{{todayLabel}}</div>
+      </div>
+
+      <sc-if value="{{notDoneToday}}" hint-placeholder-val="{{ true }}">
+        <button type="button" onClick="{{goSetup}}" style="width: 100%; border: none; border-radius: 24px; padding: 20px 22px; background: {{c.breath}}; color: {{c.onBreath}}; text-align: left; font-family: 'Manrope', sans-serif; cursor: pointer; display: flex; flex-direction: column; gap: 18px">
+          <span style="display: flex; justify-content: space-between; align-items: center; width: 100%">
+            <span style="font-size: 12px; font-weight: 800; letter-spacing: 0.14em">STRENGTH PROTOCOL</span>
+            <span style="font-size: 13px; font-weight: 700">{{summaryTime}}</span>
+          </span>
+          <span style="display: flex; justify-content: space-between; align-items: flex-end; width: 100%">
+            <span style="display: flex; flex-direction: column; gap: 6px">
+              <span style="font-size: 30px; font-weight: 800; line-height: 1.05">Start workout</span>
+              <span style="font-size: 14px; font-weight: 700">{{summaryLine}}</span>
+            </span>
+            <span style="width: 56px; height: 56px; border-radius: 50%; background: {{c.onBreath}}; display: flex; align-items: center; justify-content: center; flex-shrink: 0">
+              <span style="width: 0; height: 0; margin-left: 5px; border-top: 11px solid transparent; border-bottom: 11px solid transparent; border-left: 17px solid {{c.breath}}"></span>
+            </span>
+          </span>
+        </button>
+      </sc-if>
+
+      <sc-if value="{{doneToday}}" hint-placeholder-val="{{ false }}">
+        <div style="border-radius: 24px; padding: 20px 22px; background: {{c.surface}}; border: 1px solid {{c.border}}; display: flex; align-items: center; gap: 16px">
+          <div style="width: 52px; height: 52px; border-radius: 50%; background: {{c.breath}}; display: flex; align-items: center; justify-content: center; flex-shrink: 0">
+            <svg width="24" height="24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" style="fill: none; stroke: {{c.onBreath}}; stroke-width: 3px; stroke-linecap: round; stroke-linejoin: round"></path></svg>
+          </div>
+          <div style="flex: 1 1 auto; display: flex; flex-direction: column; gap: 2px">
+            <div style="font-size: 19px; font-weight: 800">Done for today</div>
+            <div style="font-size: 14px; color: {{c.muted}}">{{summaryLine}}</div>
+          </div>
+          <button type="button" onClick="{{goSetup}}" style="height: 44px; padding: 0 14px; border-radius: 22px; border: 1px solid {{c.border}}; background: transparent; color: {{c.text}}; font-family: 'Manrope', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer">Again</button>
+        </div>
+      </sc-if>
+
+      <div style="display: flex; flex-direction: column; gap: 12px">
+        <div style="display: flex; justify-content: space-between; align-items: flex-end">
+          <div style="display: flex; align-items: flex-end; gap: 8px">
+            <svg width="26" height="30" aria-hidden="true" style="margin-bottom: 4px"><path d="M13 2c1.2 3.6 5.8 6 5.8 12.2a5.8 5.8 0 0 1-11.6 0c0-2.4 1-4.2 2.4-5.6.3 2 1.4 3.4 2.9 3.9C11.6 9 11.6 5.2 13 2z" style="fill: {{c.breath}}"></path></svg>
+            <span style="font-size: 44px; font-weight: 800; line-height: 1">{{streak}}</span>
+            <span style="font-size: 16px; font-weight: 700; color: {{c.muted}}; padding-bottom: 5px">day streak</span>
+          </div>
+          <div style="font-size: 13px; font-weight: 600; color: {{c.muted}}; padding-bottom: 6px">Best {{best}}</div>
+        </div>
+
+        <div style="background: {{c.surface}}; border: 1px solid {{c.border}}; border-radius: 20px; padding: 8px 10px 14px; display: flex; flex-direction: column; gap: 6px">
+          <div style="display: flex; align-items: center; justify-content: space-between">
+            <button type="button" onClick="{{prevMonth}}" aria-label="Previous month" style="width: 44px; height: 44px; border: none; background: transparent; display: flex; align-items: center; justify-content: center; cursor: pointer">
+              <svg width="20" height="20" aria-hidden="true"><path d="M12.5 4.5L7 10l5.5 5.5" style="fill: none; stroke: {{c.text}}; stroke-width: 2.2px; stroke-linecap: round; stroke-linejoin: round"></path></svg>
+            </button>
+            <div style="font-size: 16px; font-weight: 800">{{monthLabel}}</div>
+            <button type="button" onClick="{{nextMonth}}" disabled="{{nextDisabled}}" aria-label="Next month" style="width: 44px; height: 44px; border: none; background: transparent; display: flex; align-items: center; justify-content: center; cursor: pointer; opacity: {{nextOpacity}}">
+              <svg width="20" height="20" aria-hidden="true"><path d="M7.5 4.5L13 10l-5.5 5.5" style="fill: none; stroke: {{c.text}}; stroke-width: 2.2px; stroke-linecap: round; stroke-linejoin: round"></path></svg>
+            </button>
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); font-size: 11px; font-weight: 700; color: {{c.muted}}; text-align: center">
+            <div>S</div><div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div>
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); row-gap: 4px">
+            <sc-for list="{{cells}}" as="cell" hint-placeholder-count="35">
+              <div style="position: relative; height: 38px; display: flex; align-items: center; justify-content: center">
+                <div style="position: absolute; top: 3px; bottom: 3px; left: {{cell.bl}}; right: {{cell.br}}; background: {{c.band}}; opacity: {{cell.bandOp}}"></div>
+                <div style="position: relative; width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: {{cell.fw}}; background: {{cell.bg}}; color: {{cell.fg}}; box-shadow: {{cell.ring}}">{{cell.num}}</div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="font-size: 13px; font-weight: 600; color: {{c.muted}}; text-align: center; padding-top: 4px">{{monthCount}}</div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{isSetup}}" hint-placeholder-val="{{ false }}">
+    <div style="height: 844px; display: flex; flex-direction: column">
+      <div style="padding: 52px 12px 6px; display: flex; align-items: center">
+        <button type="button" onClick="{{goHome}}" aria-label="Back" style="width: 44px; height: 44px; border: none; background: transparent; display: flex; align-items: center; justify-content: center; cursor: pointer">
+          <svg width="22" height="22" aria-hidden="true"><path d="M14 4.5L7.5 11l6.5 6.5" style="fill: none; stroke: {{c.text}}; stroke-width: 2.4px; stroke-linecap: round; stroke-linejoin: round"></path></svg>
+        </button>
+        <div style="flex: 1 1 auto; text-align: center; font-size: 17px; font-weight: 800">Workout setup</div>
+        <div style="width: 44px"></div>
+      </div>
+
+      <div style="flex: 1 1 auto; overflow-y: auto; padding: 10px 24px 20px; display: flex; flex-direction: column; gap: 22px">
+
+        <div style="display: flex; flex-direction: column; gap: 10px">
+          <div style="display: flex; flex-direction: column; gap: 2px">
+            <div style="font-size: 12px; font-weight: 800; letter-spacing: 0.14em; color: {{c.breath}}">SET YOUR DIALS</div>
+            <div style="font-size: 14px; color: {{c.muted}}">Match the dials on your device before you start.</div>
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px">
+            <sc-for list="{{dials}}" as="s" hint-placeholder-count="2">
+              <div style="background: {{c.surface}}; border: 1px solid {{c.border}}; border-radius: 18px; padding: 14px 14px 12px; display: flex; flex-direction: column; gap: 6px">
+                <div style="font-size: 13px; font-weight: 700; color: {{c.muted}}">{{s.label}}</div>
+                <div style="font-size: 44px; font-weight: 800; line-height: 1">{{s.value}}</div>
+                <div style="display: flex; gap: 8px; margin-top: 4px">
+                  <button type="button" onClick="{{s.dec}}" disabled="{{s.decDisabled}}" aria-label="Decrease {{s.label}}" style="flex: 1 1 0; height: 44px; border-radius: 12px; border: none; background: {{c.btn2}}; color: {{c.text}}; font-family: 'Manrope', sans-serif; font-size: 22px; font-weight: 700; cursor: pointer; opacity: {{s.decOp}}">−</button>
+                  <button type="button" onClick="{{s.inc}}" disabled="{{s.incDisabled}}" aria-label="Increase {{s.label}}" style="flex: 1 1 0; height: 44px; border-radius: 12px; border: none; background: {{c.btn2}}; color: {{c.text}}; font-family: 'Manrope', sans-serif; font-size: 22px; font-weight: 700; cursor: pointer; opacity: {{s.incOp}}">+</button>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 4px">
+          <div style="font-size: 12px; font-weight: 800; letter-spacing: 0.14em; color: {{c.muted}}; padding-bottom: 4px">WORKOUT</div>
+          <sc-for list="{{rows}}" as="s" hint-placeholder-count="7">
+            <div style="height: 56px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid {{c.border}}">
+              <div style="display: flex; flex-direction: column">
+                <div style="font-size: 15px; font-weight: 700">{{s.label}}</div>
+                <div style="font-size: 12px; color: {{c.muted}}">{{s.hint}}</div>
+              </div>
+              <div style="display: flex; align-items: center; gap: 4px">
+                <button type="button" onClick="{{s.dec}}" disabled="{{s.decDisabled}}" aria-label="Decrease {{s.label}}" style="width: 44px; height: 44px; border-radius: 22px; border: none; background: {{c.btn2}}; color: {{c.text}}; font-family: 'Manrope', sans-serif; font-size: 20px; font-weight: 700; cursor: pointer; opacity: {{s.decOp}}">−</button>
+                <div style="min-width: 54px; text-align: center; font-size: 17px; font-weight: 800">{{s.value}}</div>
+                <button type="button" onClick="{{s.inc}}" disabled="{{s.incDisabled}}" aria-label="Increase {{s.label}}" style="width: 44px; height: 44px; border-radius: 22px; border: none; background: {{c.btn2}}; color: {{c.text}}; font-family: 'Manrope', sans-serif; font-size: 20px; font-weight: 700; cursor: pointer; opacity: {{s.incOp}}">+</button>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+
+      <div style="padding: 14px 24px 34px; border-top: 1px solid {{c.border}}; display: flex; flex-direction: column; gap: 12px">
+        <div style="display: flex; justify-content: space-between; font-size: 14px">
+          <span style="color: {{c.muted}}; font-weight: 600">Total time</span>
+          <span style="font-weight: 800">{{totalLabel}}</span>
+        </div>
+        <button type="button" onClick="{{goSession}}" style="width: 100%; height: 60px; border-radius: 30px; border: none; background: {{c.breath}}; color: {{c.onBreath}}; font-family: 'Manrope', sans-serif; font-size: 18px; font-weight: 800; cursor: pointer">Start</button>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{isSession}}" hint-placeholder-val="{{ false }}">
+    <dc-import name="D01-BreathingDemo" palette="Heat" mode="{{mode}}" speed="{{speed}}" sets="{{cfg.sets}}" reps="{{cfg.reps}}" rest-seconds="{{cfg.rest}}" inhale="{{cfg.inhale}}" hold-top="{{cfg.holdTop}}" exhale="{{cfg.exhale}}" hold-bottom="{{cfg.holdBottom}}" on-finish="{{finish}}" on-exit="{{goHome}}" hint-size="390px,844px"></dc-import>
+  </sc-if>
+
+  <sc-if value="{{isComplete}}" hint-placeholder-val="{{ false }}">
+    <div style="height: 844px; box-sizing: border-box; padding: 56px 24px 32px; display: flex; flex-direction: column; gap: 18px">
+      <div style="display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center">
+        <div style="width: 56px; height: 56px; border-radius: 50%; background: {{c.breath}}; display: flex; align-items: center; justify-content: center">
+          <svg width="30" height="30" aria-hidden="true"><path d="M6.5 15.5l5.5 5.5L23.5 9.5" style="fill: none; stroke: {{c.onBreath}}; stroke-width: 3.4px; stroke-linecap: round; stroke-linejoin: round"></path></svg>
+        </div>
+        <div style="font-size: 28px; font-weight: 800">Workout complete</div>
+        <div style="font-size: 14px; font-weight: 600; color: {{c.muted}}">{{completeSummary}}</div>
+      </div>
+
+      <div style="background: {{c.surface}}; border: 1px solid {{c.border}}; border-radius: 20px; padding: 14px 10px 12px; display: flex; flex-direction: column; gap: 8px">
+        <div style="display: flex; align-items: center; gap: 6px; padding: 0 6px">
+          <svg width="18" height="20" aria-hidden="true"><path d="M9 1.5c.8 2.5 4 4.1 4 8.4a4 4 0 0 1-8 0c0-1.7.7-2.9 1.7-3.9.2 1.4 1 2.4 2 2.7C8 6.2 8 3.5 9 1.5z" style="fill: {{c.breath}}"></path></svg>
+          <span style="font-size: 17px; font-weight: 800">{{streakAfter}}-day streak</span>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); font-size: 11px; font-weight: 700; color: {{c.muted}}; text-align: center">
+          <div>S</div><div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr))">
+          <sc-for list="{{weekCells}}" as="cell" hint-placeholder-count="7">
+            <div style="position: relative; height: 38px; display: flex; align-items: center; justify-content: center">
+              <div style="position: absolute; top: 3px; bottom: 3px; left: {{cell.bl}}; right: {{cell.br}}; background: {{c.band}}; opacity: {{cell.bandOp}}"></div>
+              <div style="position: relative; width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: {{cell.fw}}; background: {{cell.bg}}; color: {{cell.fg}}; box-shadow: {{cell.ring}}">{{cell.num}}</div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 10px">
+        <div style="display: flex; justify-content: space-between; align-items: baseline">
+          <div style="font-size: 12px; font-weight: 800; letter-spacing: 0.14em; color: {{c.muted}}">HOW HARD WAS IT?</div>
+          <div style="font-size: 14px; font-weight: 800; color: {{effortZoneColor}}">{{effortZone}}</div>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px">
+          <sc-for list="{{efforts}}" as="e" hint-placeholder-count="10">
+            <button type="button" onClick="{{e.pick}}" aria-label="Effort {{e.n}}" aria-pressed="{{e.selected}}" style="height: 48px; border-radius: 12px; border: 1.5px solid {{e.border}}; background: {{e.bg}}; color: {{e.fg}}; font-family: 'Manrope', sans-serif; font-size: 17px; font-weight: 800; cursor: pointer">{{e.n}}</button>
+          </sc-for>
+        </div>
+        <div style="display: flex; justify-content: space-between; font-size: 12px; font-weight: 600; color: {{c.muted}}">
+          <span style="display: flex; align-items: center; gap: 6px"><span style="width: 8px; height: 8px; border-radius: 50%; background: {{c.rest}}"></span>1–6 Easy</span>
+          <span style="display: flex; align-items: center; gap: 6px"><span style="width: 8px; height: 8px; border-radius: 50%; background: {{c.breath}}"></span>7–8 In the zone</span>
+          <span style="display: flex; align-items: center; gap: 6px"><span style="width: 8px; height: 8px; border-radius: 50%; background: {{c.progress}}"></span>9–10 Too much</span>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 10px">
+        <div style="display: flex; flex-direction: column; gap: 2px">
+          <div style="font-size: 12px; font-weight: 800; letter-spacing: 0.14em; color: {{c.muted}}">DIALS YOU FINISHED ON</div>
+          <div style="font-size: 13px; color: {{c.muted}}">Adjust if you changed them mid-workout.</div>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px">
+          <sc-for list="{{logDials}}" as="s" hint-placeholder-count="2">
+            <div style="background: {{c.surface}}; border: 1px solid {{s.border}}; border-radius: 18px; padding: 14px 14px 12px; display: flex; flex-direction: column; gap: 6px">
+              <div style="display: flex; justify-content: space-between; align-items: baseline">
+                <div style="font-size: 13px; font-weight: 700; color: {{c.muted}}">{{s.label}}</div>
+                <div style="font-size: 12px; font-weight: 800; color: {{c.breath}}; opacity: {{s.wasOp}}">{{s.was}}</div>
+              </div>
+              <div style="font-size: 44px; font-weight: 800; line-height: 1">{{s.value}}</div>
+              <div style="display: flex; gap: 8px; margin-top: 4px">
+                <button type="button" onClick="{{s.dec}}" disabled="{{s.decDisabled}}" aria-label="Decrease {{s.label}}" style="flex: 1 1 0; height: 44px; border-radius: 12px; border: none; background: {{c.btn2}}; color: {{c.text}}; font-family: 'Manrope', sans-serif; font-size: 22px; font-weight: 700; cursor: pointer; opacity: {{s.decOp}}">−</button>
+                <button type="button" onClick="{{s.inc}}" disabled="{{s.incDisabled}}" aria-label="Increase {{s.label}}" style="flex: 1 1 0; height: 44px; border-radius: 12px; border: none; background: {{c.btn2}}; color: {{c.text}}; font-family: 'Manrope', sans-serif; font-size: 22px; font-weight: 700; cursor: pointer; opacity: {{s.incOp}}">+</button>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+
+      <button type="button" onClick="{{save}}" style="margin-top: auto; width: 100%; height: 60px; border-radius: 30px; border: none; background: {{c.breath}}; color: {{c.onBreath}}; font-family: 'Manrope', sans-serif; font-size: 18px; font-weight: 800; cursor: pointer">Save</button>
+    </div>
+  </sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"screen":{"editor":"enum","options":["home","setup","session","complete"],"default":"home","section":"Prototype"},"mode":{"editor":"enum","options":["Dark","Light"],"default":"Dark","section":"Prototype"},"speed":{"editor":"enum","options":["1×","2×","4×","8×"],"default":"1×","section":"Prototype"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  theme(mode) {
+    if (mode === 'Light') {
+      return { bgTop: '#FCF6F3', bgBottom: '#F3E7E1', text: '#1E0E0C', muted: '#6A5651', faint: '#A8958F', breath: '#E8401C', onBreath: '#FFFFFF', rest: '#3567E8', progress: '#B86E00', onZone: '#FFFFFF', surface: '#FFFFFF', border: 'rgba(30,14,12,0.09)', btn2: 'rgba(30,14,12,0.06)', band: 'rgba(232,64,28,0.18)' };
+    }
+    return { bgTop: '#200E0B', bgBottom: '#0A0505', text: '#FFF6F2', muted: '#B39B94', faint: '#6E5A55', breath: '#FF5533', onBreath: '#1E0E0C', rest: '#6B97FF', progress: '#FFB627', onZone: '#1E0E0C', surface: 'rgba(255,246,242,0.05)', border: 'rgba(255,246,242,0.10)', btn2: 'rgba(255,246,242,0.08)', band: 'rgba(255,85,51,0.24)' };
+  }
+  dkey(d) {
+    return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
+  }
+  seedDone() {
+    if (this._seed) return this._seed;
+    var out = {};
+    var offs = [1, 2, 3, 4, 5, 7, 8, 10, 11, 12, 14, 15, 17, 18, 19, 21, 22, 24, 25, 26, 28, 29, 31, 32, 33, 35, 36, 38, 40, 41, 43, 44, 45, 47, 49, 50, 52, 53, 54, 56];
+    var now = new Date();
+    for (var i = 0; i < offs.length; i++) {
+      var d = new Date(now.getFullYear(), now.getMonth(), now.getDate() - offs[i]);
+      out[this.dkey(d)] = true;
+    }
+    this._seed = out;
+    return out;
+  }
+  renderVals() {
+    var self = this;
+    var P = this.props || {};
+    var st = this.state || {};
+    var mode = P.mode === 'Light' ? 'Light' : 'Dark';
+    var c = this.theme(mode);
+    var screen = st.screen || P.screen || 'home';
+    var done = st.done || this.seedDone();
+    var cfg = Object.assign({ dialIn: 4, dialOut: 3, sets: 3, reps: 10, inhale: 2.5, holdTop: 1, exhale: 2.5, holdBottom: 1, rest: 60 }, st.cfg || {});
+    var dkey = function (d) { return self.dkey(d); };
+
+    var now = new Date();
+    var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    var dayOffset = function (base, n) { return new Date(base.getFullYear(), base.getMonth(), base.getDate() + n); };
+    var isDoneDate = function (d) { return !!done[dkey(d)] && d <= today; };
+    var doneToday = isDoneDate(today);
+
+    // Streaks
+    var streakFrom = function (start) {
+      var n = 0, d = start;
+      while (isDoneDate(d)) { n++; d = dayOffset(d, -1); }
+      return n;
+    };
+    var streak = doneToday ? streakFrom(today) : streakFrom(dayOffset(today, -1));
+    var streakAfter = doneToday ? streak : streakFrom(dayOffset(today, -1)) + 1;
+    var best = 0, run = 0;
+    for (var bi = 400; bi >= 0; bi--) {
+      if (isDoneDate(dayOffset(today, -bi))) { run++; if (run > best) best = run; } else run = 0;
+    }
+
+    // Calendar cells
+    var cellFor = function (d, col, prevD, nextD) {
+      if (!d) return { num: '', bg: 'transparent', fg: 'transparent', ring: 'none', fw: 500, bl: '50%', br: '50%', bandOp: 0 };
+      var isDone = isDoneDate(d);
+      var isToday = d.getTime() === today.getTime();
+      var isFuture = d > today;
+      var bandL = isDone && col > 0 && prevD && isDoneDate(prevD);
+      var bandR = isDone && col < 6 && nextD && isDoneDate(nextD);
+      var o = { num: String(d.getDate()), bl: bandL ? '0' : '50%', br: bandR ? '0' : '50%', bandOp: (bandL || bandR) ? 1 : 0, ring: 'none' };
+      if (isDone) { o.bg = c.breath; o.fg = c.onBreath; o.fw = 800; }
+      else if (isToday) { o.bg = 'transparent'; o.fg = c.text; o.fw = 800; o.ring = 'inset 0 0 0 2px ' + c.breath; }
+      else if (isFuture) { o.bg = 'transparent'; o.fg = c.faint; o.fw = 500; }
+      else { o.bg = 'transparent'; o.fg = c.muted; o.fw = 600; }
+      if (isDone && isToday) o.ring = '0 0 0 2px ' + c.bgTop + ', 0 0 0 4px ' + c.breath;
+      return o;
+    };
+    var buildCells = function (dates) {
+      return dates.map(function (d, i) {
+        var col = i % 7;
+        return cellFor(d, col, col > 0 ? dates[i - 1] : null, col < 6 ? dates[i + 1] : null);
+      });
+    };
+
+    var mo = st.monthOffset || 0;
+    var first = new Date(today.getFullYear(), today.getMonth() + mo, 1);
+    var daysIn = new Date(first.getFullYear(), first.getMonth() + 1, 0).getDate();
+    var monthDates = [];
+    for (var lb = 0; lb < first.getDay(); lb++) monthDates.push(null);
+    var monthCountN = 0;
+    for (var dd = 1; dd <= daysIn; dd++) {
+      var dt = new Date(first.getFullYear(), first.getMonth(), dd);
+      monthDates.push(dt);
+      if (isDoneDate(dt)) monthCountN++;
+    }
+    while (monthDates.length % 7 !== 0) monthDates.push(null);
+    var cells = buildCells(monthDates);
+    var monthName = first.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+
+    // Week strip for the complete screen (shows today as done)
+    var weekStart = dayOffset(today, -today.getDay());
+    var weekDates = [];
+    for (var wi = 0; wi < 7; wi++) weekDates.push(dayOffset(weekStart, wi));
+    var savedDone = done;
+    if (!doneToday) {
+      done = Object.assign({}, done);
+      done[dkey(today)] = true;
+    }
+    var weekCells = buildCells(weekDates);
+    done = savedDone;
+
+    // Setup steppers
+    var C = cfg.inhale + cfg.holdTop + cfg.exhale + cfg.holdBottom;
+    var totalSec = 3 + cfg.sets * cfg.reps * C + (cfg.sets - 1) * cfg.rest;
+    var fmt = function (s) { s = Math.round(s); var m = Math.floor(s / 60), r = s % 60; return m + ':' + (r < 10 ? '0' : '') + r; };
+    var setCfg = function (k, v) { var n = Object.assign({}, cfg); n[k] = v; self.setState({ cfg: n }); };
+    var mk = function (label, hint, k, step, min, max, unit) {
+      var v = cfg[k];
+      var shown = unit === 's' ? (v % 1 === 0 ? v.toFixed(0) : v.toFixed(1)) + 's' : String(v);
+      return {
+        label: label, hint: hint, value: shown,
+        dec: function () { setCfg(k, Math.max(min, Math.round((v - step) * 10) / 10)); },
+        inc: function () { setCfg(k, Math.min(max, Math.round((v + step) * 10) / 10)); },
+        decDisabled: v <= min, incDisabled: v >= max,
+        decOp: v <= min ? 0.35 : 1, incOp: v >= max ? 0.35 : 1
+      };
+    };
+    var dials = [mk('Inhale dial', '', 'dialIn', 1, 1, 6, ''), mk('Exhale dial', '', 'dialOut', 1, 1, 5, '')];
+    var rows = [
+      mk('Sets', '', 'sets', 1, 1, 6, ''),
+      mk('Reps per set', '', 'reps', 1, 1, 30, ''),
+      mk('Inhale', 'Breathe in hard', 'inhale', 0.5, 0.5, 10, 's'),
+      mk('Hold', 'At the top', 'holdTop', 0.5, 0, 10, 's'),
+      mk('Exhale', 'Breathe out hard', 'exhale', 0.5, 0.5, 10, 's'),
+      mk('Hold', 'At the bottom', 'holdBottom', 0.5, 0, 10, 's'),
+      mk('Rest between sets', '', 'rest', 15, 15, 180, 's')
+    ];
+
+    // Effort + dial question
+    var effort = st.effort || 0;
+    var zoneOf = function (n) { return n >= 9 ? c.progress : (n >= 7 ? c.breath : c.rest); };
+    var efforts = [];
+    for (var en = 1; en <= 10; en++) {
+      (function (n) {
+        var sel = effort === n;
+        var zc = zoneOf(n);
+        efforts.push({
+          n: n, selected: sel,
+          bg: sel ? zc : c.surface,
+          fg: sel ? c.onZone : zc,
+          border: sel ? zc : c.border,
+          pick: function () { self.setState({ effort: n }); }
+        });
+      })(en);
+    }
+    var effortZone = effort === 0 ? 'Tap a number' : (effort >= 9 ? 'Too much' : (effort >= 7 ? 'In the zone' : 'Easy'));
+    var effortZoneColor = effort === 0 ? c.muted : zoneOf(effort);
+    var logIn = st.logIn != null ? st.logIn : cfg.dialIn;
+    var logOut = st.logOut != null ? st.logOut : cfg.dialOut;
+    var mkLog = function (label, k, v, startV, max) {
+      var changed = v !== startV;
+      var setV = function (nv) { var o = {}; o[k] = nv; self.setState(o); };
+      return {
+        label: label, value: String(v),
+        was: 'was ' + startV, wasOp: changed ? 1 : 0,
+        border: changed ? c.breath : c.border,
+        dec: function () { setV(Math.max(1, v - 1)); },
+        inc: function () { setV(Math.min(max, v + 1)); },
+        decDisabled: v <= 1, incDisabled: v >= max,
+        decOp: v <= 1 ? 0.35 : 1, incOp: v >= max ? 0.35 : 1
+      };
+    };
+    var logDials = [mkLog('Inhale dial', 'logIn', logIn, cfg.dialIn, 6), mkLog('Exhale dial', 'logOut', logOut, cfg.dialOut, 5)];
+
+    var go = function (s) { return function () { self.setState({ screen: s }); }; };
+
+    return {
+      c: c,
+      mode: mode,
+      speed: P.speed || '1×',
+      cfg: cfg,
+      isHome: screen === 'home',
+      isSetup: screen === 'setup',
+      isSession: screen === 'session',
+      isComplete: screen === 'complete',
+      todayLabel: today.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' }),
+      doneToday: doneToday,
+      notDoneToday: !doneToday,
+      summaryTime: '≈ ' + Math.ceil(totalSec / 60) + ' min',
+      summaryLine: cfg.sets + ' sets × ' + cfg.reps + ' reps',
+      streak: streak,
+      best: best,
+      streakAfter: streakAfter,
+      cells: cells,
+      weekCells: weekCells,
+      monthLabel: monthName,
+      monthCount: monthCountN + (monthCountN === 1 ? ' workout' : ' workouts') + ' in ' + first.toLocaleDateString('en-US', { month: 'long' }),
+      prevMonth: function () { self.setState({ monthOffset: mo - 1 }); },
+      nextMonth: function () { if (mo < 0) self.setState({ monthOffset: mo + 1 }); },
+      nextDisabled: mo >= 0,
+      nextOpacity: mo >= 0 ? 0.3 : 1,
+      dials: dials,
+      rows: rows,
+      totalLabel: fmt(totalSec),
+      goHome: function () { self.setState({ screen: 'home', monthOffset: 0 }); },
+      goSetup: go('setup'),
+      goSession: go('session'),
+      finish: function () { self.setState({ screen: 'complete', effort: 0, logIn: cfg.dialIn, logOut: cfg.dialOut }); },
+      completeSummary: cfg.sets + ' sets × ' + cfg.reps + ' reps · ' + fmt(totalSec),
+      logDials: logDials,
+      efforts: efforts,
+      effortZone: effortZone,
+      effortZoneColor: effortZoneColor,
+      save: function () {
+        var nd = Object.assign({}, done);
+        nd[dkey(today)] = true;
+        var nc = Object.assign({}, cfg, { dialIn: logIn, dialOut: logOut });
+        self.setState({ done: nd, cfg: nc, screen: 'home', monthOffset: 0, logIn: null, logOut: null });
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>
