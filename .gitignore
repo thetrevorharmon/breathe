@@ -152,3 +152,6 @@ vite.config.ts.timestamp-*
 .screenshots/
 dist/
 node_modules/
+
+# Agent worktrees
+.claude/worktrees/
