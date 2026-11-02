@@ -22,16 +22,15 @@ const CLIP_URLS: Record<Clip, string> = {
 
 /**
  * iOS audio session per setting. Web Audio defaults to "ambient", which the
- * silent switch mutes.
- * - duck: "transient" plays over other audio and lowers it while a cue plays.
- * - mix: "ambient" plays over music at full volume, but follows the silent switch.
- * - pause: "playback" is always audible but takes over (pauses) other audio.
+ * silent switch mutes. WebKit maps these to AVAudioSession categories with no
+ * options, so there is no "duck others": "transient" is just Ambient again.
+ * - pause: "playback" (Playback) plays with the silent switch on, but pauses music.
+ * - mix: "ambient" (Ambient) plays over music, but the silent switch mutes it.
  * Only Safari supports this API; elsewhere it's a no-op.
  */
 const SESSION_TYPE: Record<CueAudio, string> = {
-  duck: 'transient',
-  mix: 'ambient',
   pause: 'playback',
+  mix: 'ambient',
 }
 
 let ctx: AudioContext | null = null

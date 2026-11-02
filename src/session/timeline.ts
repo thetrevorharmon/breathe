@@ -1,8 +1,10 @@
 import type { SessionConfig } from '../domain/types'
 
-export const LEAD_SECONDS = 3
+export const LEAD_SECONDS = 4
+/** Seconds of countdown before every set: 4, 3, 2 tick, then 1 is the "go" tone. */
+export const COUNTDOWN = [4, 3, 2, 1] as const
 /** Seconds before a set at which a background-elapsed rest is held. */
-export const HOLD_BEFORE_SET = 3
+export const HOLD_BEFORE_SET = 4
 
 export type SegmentKind = 'lead' | 'breathe' | 'rest'
 
@@ -52,7 +54,7 @@ export function normalize(c: Partial<SessionConfig>): NormalizedConfig {
 
 const cache = new WeakMap<object, Timeline>()
 
-/** lead(3) -> set -> rest -> ... -> set (no rest after the last set). Memoised per config object. */
+/** lead(4) -> set -> rest -> ... -> set (no rest after the last set). Memoised per config object. */
 export function buildTimeline(config: Partial<SessionConfig>): Timeline {
   const hit = cache.get(config)
   if (hit) return hit

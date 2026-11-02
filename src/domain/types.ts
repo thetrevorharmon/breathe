@@ -1,7 +1,8 @@
 import type { ColorMode } from '../theme/tokens'
 
 /** How cues share audio with music on iOS (see session/cues/audio.ts). */
-export type CueAudio = 'duck' | 'mix' | 'pause'
+/** How cues share audio with music on iOS. Only 'pause' plays with the silent switch on. */
+export type CueAudio = 'pause' | 'mix'
 
 export type Settings = {
   dialIn: number // 1–6

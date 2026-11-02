@@ -19,7 +19,7 @@ export type ClockSnapshot = {
  * Background rules (PLAN §4):
  *  - hidden while breathing / lead-in: pause immediately
  *  - hidden during rest: keep counting on wall-clock time; on return add the hidden duration
- *  - rest elapsed while hidden: hold at 3 s before the set, paused (never auto-start a set)
+ *  - rest elapsed while hidden: hold at the start of the countdown, paused (never auto-start a set)
  */
 export class SessionClockCore {
   private t: number
@@ -170,7 +170,7 @@ export class SessionClockCore {
     const seg = segmentAt(buildTimeline(this.config), this.t)
     if (!seg || seg.kind !== 'rest') return
     if (this.t + gap >= seg.end) {
-      // Rest ran out in the background: hold 3 s before the set, paused.
+      // Rest ran out in the background: hold at the start of the countdown, paused.
       const hold = Math.max(this.t, seg.end - HOLD_BEFORE_SET)
       this.active += hold - this.t
       this.t = hold

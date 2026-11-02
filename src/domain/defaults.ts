@@ -14,5 +14,5 @@ export const DEFAULT_SETTINGS: Settings = {
   themeId: 'heat',
   colorMode: 'system',
   cuesMuted: false,
-  cueAudio: 'duck',
+  cueAudio: 'pause',
 }

@@ -17,9 +17,12 @@ const MODES: { value: ColorMode; label: string }[] = [
 ]
 
 const CUE_AUDIO: { value: CueAudio; label: string; hint: string }[] = [
-  { value: 'duck', label: 'Lower', hint: 'Music dips while each cue plays.' },
+  {
+    value: 'pause',
+    label: 'Pause',
+    hint: 'Cues play even with the silent switch on. Music pauses during the workout.',
+  },
   { value: 'mix', label: 'Mix', hint: 'Cues play over music, but the silent switch mutes them.' },
-  { value: 'pause', label: 'Pause', hint: 'Cues always play; other audio stops during the workout.' },
 ]
 
 const readText = (file: File) =>
@@ -220,7 +223,7 @@ export function SettingsSheet({
                   aria-describedby="music-hint"
                   value={settings.cueAudio}
                   onValueChange={(v) => v && update({ cueAudio: v as CueAudio })}
-                  className="grid grid-cols-3 gap-1 rounded-full bg-subtle p-1"
+                  className="grid grid-cols-2 gap-1 rounded-full bg-subtle p-1"
                 >
                   {CUE_AUDIO.map((m) => (
                     <ToggleGroup.Item

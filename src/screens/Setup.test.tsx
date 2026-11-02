@@ -19,9 +19,9 @@ const dec = (l: string) => screen.getByLabelText(`Decrease ${l}`)
 const inc = (l: string) => screen.getByLabelText(`Increase ${l}`)
 
 describe('SetupScreen', () => {
-  it('shows default total 5:33', () => {
+  it('shows default total 5:34', () => {
     render(<SetupScreen onNext={() => {}} />)
-    expect(screen.getByTestId('total-time')).toHaveTextContent('5:33')
+    expect(screen.getByTestId('total-time')).toHaveTextContent('5:34')
   })
 
   it('disables buttons at bounds', () => {
@@ -44,8 +44,8 @@ describe('SetupScreen', () => {
     await userEvent.click(inc('Inhale'))
     expect(screen.getByText('3s')).toBeInTheDocument()
     expect(getSettings().inhale).toBe(3)
-    // C 7 -> 7.5: 3 + 3*10*7.5 + 120 = 348
-    expect(screen.getByTestId('total-time')).toHaveTextContent('5:48')
+    // C 7 -> 7.5: 4 + 3*10*7.5 + 120 = 349
+    expect(screen.getByTestId('total-time')).toHaveTextContent('5:49')
     await userEvent.click(inc('Rest between sets'))
     expect(getSettings().restSeconds).toBe(75)
     expect(JSON.parse(store.get(KEYS.settings)!).restSeconds).toBe(75)

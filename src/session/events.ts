@@ -1,16 +1,16 @@
 import type { SessionConfig } from '../domain/types'
-import { buildTimeline, phaseOffsets, type PhaseName } from './timeline'
+import { buildTimeline, COUNTDOWN, phaseOffsets, type PhaseName } from './timeline'
 
 /**
  * Events the cues layer (T7) reacts to. All carry the timeline time `at` at which they occur.
  *  - phase:         a breathing phase begins (zero-length holds are skipped)
  *  - restStart:     a set ended and rest begins (`set` = the set just finished, 0-based)
- *  - countdownTick: 3, 2, 1 seconds before a set starts (lead-in and every rest)
+ *  - countdownTick: 4, 3, 2, 1 seconds before a set starts (lead-in and every rest)
  */
 export type SessionEvent =
   | { type: 'phase'; at: number; phase: PhaseName; set: number; rep: number }
   | { type: 'restStart'; at: number; set: number }
-  | { type: 'countdownTick'; at: number; n: 1 | 2 | 3; set: number }
+  | { type: 'countdownTick'; at: number; n: (typeof COUNTDOWN)[number]; set: number }
 
 /**
  * Events with `from <= at < to`, sorted by time. Half-open, so consecutive windows
@@ -43,7 +43,7 @@ export function eventsBetween(
       if (seg.kind === 'rest' && inWin(seg.start)) {
         out.push({ type: 'restStart', at: seg.start, set: seg.set - 1 })
       }
-      for (const n of [3, 2, 1] as const) {
+      for (const n of COUNTDOWN) {
         const at = seg.end - n
         if (at >= seg.start && inWin(at)) out.push({ type: 'countdownTick', at, n, set: seg.set })
       }

@@ -32,7 +32,7 @@ type Clock = { subscribe: (l: (e: SessionEvent) => void) => () => void }
  * Plays cues for clock events. Mute is read live; muting also cuts the word in
  * flight. `cueAudio` sets how cues share audio with music while the session is open.
  */
-export function useCues(clock: Clock, muted: boolean, cueAudio: CueAudio = 'duck'): void {
+export function useCues(clock: Clock, muted: boolean, cueAudio: CueAudio = 'pause'): void {
   const mutedRef = useRef(muted)
   useEffect(() => {
     mutedRef.current = muted

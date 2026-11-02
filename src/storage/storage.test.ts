@@ -87,6 +87,13 @@ describe('storage', () => {
     expect(getSettings()).toEqual({ ...DEFAULT_SETTINGS, sets: 4 })
   })
 
+  it("moves the old 'duck' music option to 'pause' and keeps 'mix'", () => {
+    setBackend(memBackend({ [KEYS.settings]: JSON.stringify({ cueAudio: 'duck' }) }))
+    expect(getSettings().cueAudio).toBe('pause')
+    setBackend(memBackend({ [KEYS.settings]: JSON.stringify({ cueAudio: 'mix' }) }))
+    expect(getSettings().cueAudio).toBe('mix')
+  })
+
   it('returns a stable snapshot between reads', () => {
     updateSettings({ sets: 2 })
     expect(getSettings()).toBe(getSettings())

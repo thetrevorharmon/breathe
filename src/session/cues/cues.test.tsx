@@ -65,20 +65,20 @@ describe('useCues over a full default session', () => {
     expect(count('play:holdTop')).toBe(30)
     expect(count('play:holdBottom')).toBe(30)
     expect(count('play:rest')).toBe(2)
-    expect(count('play:tick')).toBe(6)
+    expect(count('play:tick')).toBe(9)
     expect(count('play:go')).toBe(3)
-    expect(log.length).toBe(120 + 2 + 9)
+    expect(log.length).toBe(120 + 2 + 12)
   })
 
-  it('lead-in ticks land at t=0,1,2 then Inhale at 3', () => {
+  it('lead-in ticks land at t=0,1,2 and go at 3, then Inhale at 4', () => {
     const { core, state } = setup()
-    run(core, state, 3.2)
-    expect(log).toEqual(['play:tick', 'play:tick', 'play:go', 'play:inhale'])
+    run(core, state, 4.2)
+    expect(log).toEqual(['play:tick', 'play:tick', 'play:tick', 'play:go', 'play:inhale'])
   })
 
   it('Skip during rest lands on the set start and fires Inhale once', () => {
     const { core, state } = setup()
-    run(core, state, 74)
+    run(core, state, 75)
     expect(count('play:rest')).toBe(1)
     log.length = 0
     act(() => core.skip())
@@ -101,8 +101,8 @@ describe('useCues over a full default session', () => {
     run(core, state, 20)
     log.length = 0
     act(() => core.restart(state.ms))
-    run(core, state, 3.2)
-    expect(log).toEqual(['play:tick', 'play:tick', 'play:go', 'play:inhale'])
+    run(core, state, 4.2)
+    expect(log).toEqual(['play:tick', 'play:tick', 'play:tick', 'play:go', 'play:inhale'])
   })
 
   it('Pause/Resume does not repeat or drop cues', () => {
@@ -118,7 +118,7 @@ describe('useCues over a full default session', () => {
     expect(count('play:rest')).toBe(0)
   })
 
-  it('background hold resume replays ticks 3,2,1', () => {
+  it('background hold resume replays ticks 4,3,2 and go', () => {
     const { core, state } = setup()
     run(core, state, 80)
     log.length = 0
@@ -126,8 +126,8 @@ describe('useCues over a full default session', () => {
     state.ms += 200_000
     core.show(state.ms)
     act(() => core.resume(state.ms))
-    run(core, state, 3.2)
-    expect(log).toEqual(['play:tick', 'play:tick', 'play:go', 'play:inhale'])
+    run(core, state, 4.2)
+    expect(log).toEqual(['play:tick', 'play:tick', 'play:tick', 'play:go', 'play:inhale'])
   })
 
   it('mute silences everything, live', () => {
@@ -146,11 +146,11 @@ describe('useCues over a full default session', () => {
   it('sets the audio session from the setting and resets it on unmount', () => {
     const core = new SessionClockCore(cfg)
     const hook = renderHook(({ a }) => useCues({ subscribe: core.onEvent }, false, a), {
-      initialProps: { a: 'duck' as 'duck' | 'mix' | 'pause' },
+      initialProps: { a: 'pause' as 'pause' | 'mix' },
     })
     hook.rerender({ a: 'mix' })
     hook.unmount()
-    expect(sessions).toEqual(['duck', 'mix', 'auto'])
+    expect(sessions).toEqual(['pause', 'mix', 'auto'])
   })
 
   it('unsubscribes on unmount', () => {
@@ -165,7 +165,7 @@ describe('real audio module without browser support', () => {
   it('does not throw', async () => {
     const real = await vi.importActual<typeof audio>('./audio')
     expect(() => {
-      real.unlockAudio('duck')
+      real.unlockAudio('pause')
       real.play('rest')
       real.play('inhale')
       real.setAudioSession('pause')
@@ -226,8 +226,6 @@ describe('setAudioSession', () => {
     const real = await vi.importActual<typeof audio>('./audio')
     const session = { type: 'auto' }
     Object.defineProperty(navigator, 'audioSession', { value: session, configurable: true })
-    real.setAudioSession('duck')
-    expect(session.type).toBe('transient')
     real.setAudioSession('mix')
     expect(session.type).toBe('ambient')
     real.setAudioSession('pause')

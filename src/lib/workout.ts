@@ -1,4 +1,5 @@
 import type { Settings } from '../domain/types'
+import { LEAD_SECONDS } from '../session/timeline'
 
 type WorkoutShape = Pick<
   Settings,
@@ -8,7 +9,7 @@ type WorkoutShape = Pick<
 /** Seconds for one breath cycle. */
 export const cycleSeconds = (s: WorkoutShape) => s.inhale + s.holdTop + s.exhale + s.holdBottom
 
-/** 3 s lead-in + all reps + rests between sets. */
+/** Lead-in + all reps + rests between sets. */
 export function totalSeconds(s: WorkoutShape): number {
-  return 3 + s.sets * s.reps * cycleSeconds(s) + (s.sets - 1) * s.restSeconds
+  return LEAD_SECONDS + s.sets * s.reps * cycleSeconds(s) + (s.sets - 1) * s.restSeconds
 }

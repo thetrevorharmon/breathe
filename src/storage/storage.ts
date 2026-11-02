@@ -99,6 +99,8 @@ export function parseSettings(raw: string | null): Settings {
     }
     if (!['system', 'light', 'dark'].includes(out.colorMode))
       out.colorMode = DEFAULT_SETTINGS.colorMode
+    // Also moves the old 'duck' option (which iOS never honoured) to the default.
+    if (!['pause', 'mix'].includes(out.cueAudio)) out.cueAudio = DEFAULT_SETTINGS.cueAudio
   }
   return out
 }

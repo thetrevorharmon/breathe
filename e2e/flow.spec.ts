@@ -16,7 +16,7 @@ test('full flow: Home -> Setup -> Session -> Complete -> Save -> Home', async ({
   await expect(page.getByText('0 workouts in')).toBeVisible()
 
   await page.getByRole('button', { name: /Start workout/ }).click()
-  await expect(page.getByTestId('total-time')).toHaveText('5:33')
+  await expect(page.getByTestId('total-time')).toHaveText('5:34')
   for (const [name, n] of [
     ['Decrease Sets', 5],
     ['Decrease Reps per set', 30],
@@ -34,8 +34,8 @@ test('full flow: Home -> Setup -> Session -> Complete -> Save -> Home', async ({
     const dec = page.getByRole('button', { name: 'Decrease Hold', exact: true }).nth(which)
     while (await dec.isEnabled()) await dec.click()
   }
-  // 3 s lead-in + 1 rep of 0.5 + 0.5
-  await expect(page.getByTestId('total-time')).toHaveText('0:04')
+  // 4 s lead-in + 1 rep of 0.5 + 0.5
+  await expect(page.getByTestId('total-time')).toHaveText('0:05')
 
   await page.getByRole('button', { name: 'Start', exact: true }).click()
   await expect(page.getByText('Set 1 of 1')).toBeVisible()
